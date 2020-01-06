@@ -7,6 +7,6 @@ This project is an implementation of the well known merge sort algorithm, but wi
 
 **3. mergesort_full.cilk -** This is the fully parallel implementation of the program, with both the merge and the sort functions set to execute in parallel.
 
-**4. results.htm -** this file shows the statistics collected after running each of the above files on various array sizes(n ranges from 100 elements to 1M elements), and with various number of processors working on the program in parallel(p ranges from 1 core to 4 cores)
+**4. results.htm -** This file shows the statistics collected after running each of the above files on various array sizes(n ranges from 100 elements to 1M elements), and with various number of processors working on the program in parallel(p ranges from 1 core to 4 cores)
 
 
