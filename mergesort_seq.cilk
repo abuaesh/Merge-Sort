@@ -1,0 +1,110 @@
+/*
+ * Original Mergesort Algorithm C-Implementation from: 
+ * http://p2p.wrox.com/visual-c/66348-merge-sort-c-source-code.html 
+ * By: yulin11, in March 3rd, 2008, 02:51 AM
+ *  
+ */
+
+#include <cilk-lib.cilkh>
+#include <stdlib.h>
+#include <stdio.h>
+
+void merge(int* numbers, int* temp, int left, int mid, int right)
+{
+  int i, left_end, num_elements, tmp_pos;
+ 
+  left_end = mid - 1;
+  tmp_pos = left;
+  num_elements = right - left + 1;
+ 
+  while ((left <= left_end) && (mid <= right))//none of the sub-arrays went empty
+  {
+    if (numbers[left] <= numbers[mid])
+    {
+      temp[tmp_pos] = numbers[left];
+      tmp_pos = tmp_pos + 1;
+      left = left +1;
+    }
+    else
+    {
+      temp[tmp_pos] = numbers[mid];
+      tmp_pos = tmp_pos + 1;
+      mid = mid + 1;
+    }
+  }
+ 
+  while (left <= left_end) //the right sub-arrays went empty first
+  {
+    temp[tmp_pos] = numbers[left];
+    left = left + 1;
+    tmp_pos = tmp_pos + 1;
+  }
+  while (mid <= right)//the left sub-arrays went empty first 
+  {
+    temp[tmp_pos] = numbers[mid];
+    mid = mid + 1;
+    tmp_pos = tmp_pos + 1;
+  }
+ 
+  for (i=0; i < num_elements; i++) //putting the elements back to the original array
+  {
+    numbers[right] = temp[right];
+    right = right - 1;
+  }
+}
+
+void m_sort(int* numbers, int* temp, int left, int right)
+{
+  int mid;
+ 
+  if (right > left)
+  {
+    mid = (right + left) / 2;
+    m_sort(numbers, temp, left, mid);
+    m_sort(numbers, temp, mid+1, right);
+    
+
+    merge(numbers, temp, left, mid+1, right);
+    
+  }
+}
+
+cilk int main(int argc, char *argv[])
+{
+     int n, *a, *b, i;
+
+     if (argc != 2) {
+	  fprintf(stderr, "Usage: mergesort [<cilk options>] <n>\n");
+	  Cilk_exit(1);
+     }
+     //Size of the array : n
+     n = atoi(argv[1]);
+     
+     /* alloc memory */
+     if ((a = malloc(n * sizeof(int))) == NULL)
+	   return 3;
+     if ((b = malloc(n * sizeof(int))) == NULL)
+	   return 3;
+     /* fill array will numbers in range [0, 100) */
+     for (i = 0; i < n; i++)
+	  a[i] = 100 * ((float) rand() / ((float) RAND_MAX + 1));
+
+     /* print array elements before sorting*/
+     /*printf("\nOriginal Array: \n");
+     for (i = 0; i < n; i++)
+	  printf("%d  ", a[i]);*/
+
+     /* sort array elements*/
+     m_sort(a, b, 0, n-1);
+     
+
+    /* print array elements after sorting*/
+     /*printf("\nSorted Array: \n");
+     for (i = 0; i < n; i++)
+	  printf("%d  ", a[i]);
+     */
+     printf("\n\n");
+     free(a);
+     free(b);
+     return 0;
+}
